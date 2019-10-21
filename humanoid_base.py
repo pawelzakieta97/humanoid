@@ -5,14 +5,6 @@ class HumanoidBase:
     def __init__(self,                   # po utworzeniu obiektu dobrze jest postawic melsona funkcja wstawanie
                  portAX='COM8',          # port, który obsluguje AX
                  portRX='COM11'):           # port, który obsluguje RX
-        self.ID = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
-        if os.name == 'nt':
-            portAX='COM8'
-            portRX='COM11'
-        elif os.name =='posix':
-            portAX='/dev/ttyUSB0'
-            portRX = '/dev/ttyUSB1'
-
 
         self.port_AX = PortHandler(portAX)
         self.port_RX = PortHandler(portRX)
@@ -33,10 +25,10 @@ class HumanoidBase:
 
     def res_port(self):
         self.port_AX.closePort()
-        self.port_RX.closePort()
+        # self.port_RX.closePort()
 
         self.port_AX.openPort()
-        self.port_RX.openPort()
+        # self.port_RX.openPort()
         time.sleep(0.0001)
 
     def poj_odczyt(self,                        # odczyt wartosci z pojedynczego serwa
@@ -92,7 +84,7 @@ class HumanoidBase:
                      Adres,        #   adres rejestru w dynamixelach
                      values):      # lista z wartościami dla każdego serwa
         pakietAX = GroupSyncWrite(self.port_AX,self.packetHandler,Adres,1)
-        pakietRX = GroupSyncWrite(self.port_RX,self.packetHandler,Adres,1)
+        # pakietRX = GroupSyncWrite(self.port_RX,self.packetHandler,Adres,1)
 
         for i in range(1,13):
            pakietRX.addParam(i,[values[i]])                    # do obiektu trzeba dodac wartosci
@@ -104,11 +96,11 @@ class HumanoidBase:
 
 
         pakietAX.txPacket()
-        pakietRX.txPacket()     # wysyłanie
+        # pakietRX.txPacket()     # wysyłanie
 
 
         pakietAX.clearParam()
-        pakietRX.clearParam()
+        # pakietRX.clearParam()
 
 
     def sync_write_2(self,             # wysyla do kazdego podlaczonego serwa jakad wartosc ( 2 bajtowa)
@@ -117,12 +109,12 @@ class HumanoidBase:
                      values):          # lista z wartościami
 
         pakietAX = GroupSyncWrite(self.port_AX,self.packetHandler,Adres,2)
-        pakietRX = GroupSyncWrite(self.port_RX,self.packetHandler,Adres,2)
+        # pakietRX = GroupSyncWrite(self.port_RX,self.packetHandler,Adres,2)
 
         for i in range(1,13):
             starszy = values[i] >> 8
             mlodszy = values[i] - (starszy << 8)
-            pakietRX.addParam(i,[mlodszy,starszy])                    # do obiektu trzeba dodac wartosci
+            # pakietRX.addParam(i,[mlodszy,starszy])                    # do obiektu trzeba dodac wartosci
 
         for i in range(13,20):
             starszy = values[i] >> 8
@@ -130,10 +122,10 @@ class HumanoidBase:
             pakietAX.addParam(i,[mlodszy,starszy])
 
         pakietAX.txPacket()
-        pakietRX.txPacket()  # wysyłanie
+        # pakietRX.txPacket()  # wysyłanie
 
         pakietAX.clearParam()
-        pakietRX.clearParam()
+        # pakietRX.clearParam()
 
     def send_pos(self,poz):
         for i in range(1, 13):
@@ -299,6 +291,6 @@ class HumanoidBase:
 
 
     def __del__(self):
-        self.port_RX.closePort()
+        # self.port_RX.closePort()
         self.port_AX.closePort()
         print('Skasowano obiekt humanoid')

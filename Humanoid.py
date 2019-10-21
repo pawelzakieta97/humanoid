@@ -24,16 +24,17 @@ class Humanoid(HumanoidBase):
         self.dynamixel_values = [0] * 20
         self.dimensions = {'arm': 1.0, 'forearm': 1.0, 'shoulder': 0.5, 'spine': 1}
 
-    def send_signals(self):
-        self.dynamixel_values[13] = 512 - int(self.angles['RAy']*1024/np.deg2rad(300))
-        self.dynamixel_values[14] = 512 - int(self.angles['RAx'] * 1024 / np.deg2rad(300))
-        self.dynamixel_values[15] = 512 + int(self.angles['RFAy'] * 1024 / np.deg2rad(300))
+    def send_signals(self, k=0.1):
+        # ustawienie wartosci wywyslanych do dynamixeli, z filtrem low pass
+        self.dynamixel_values[13] = self.dynamixel_values[13]*(1-k) + k*(512 - int(self.angles['RAy']*1024/np.deg2rad(300)))
+        self.dynamixel_values[14] = self.dynamixel_values[14]*(1-k) + k*(512 - int(self.angles['RAx'] * 1024 / np.deg2rad(300)))
+        self.dynamixel_values[15] = self.dynamixel_values[14]*(1-k) + k*(512 + int(self.angles['RFAy'] * 1024 / np.deg2rad(300)))
 
-        self.dynamixel_values[16] = 512 - int(self.angles['RAy'] * 1024 / np.deg2rad(300))
-        self.dynamixel_values[17] = 512 - int(self.angles['RAx'] * 1024 / np.deg2rad(300))
-        self.dynamixel_values[18] = 512 + int(self.angles['RFAy'] * 1024 / np.deg2rad(300))
+        self.dynamixel_values[16] = self.dynamixel_values[16]*(1-k) + k*(512 - int(self.angles['LAy'] * 1024 / np.deg2rad(300)))
+        self.dynamixel_values[17] = self.dynamixel_values[17]*(1-k) + k*(512 - int(self.angles['LAx'] * 1024 / np.deg2rad(300)))
+        self.dynamixel_values[18] = self.dynamixel_values[18]*(1-k) + k*(512 + int(self.angles['LFAy'] * 1024 / np.deg2rad(300)))
 
-        self.dynamixel_values[19] = 512 + int((self.angles['Hz'] + np.deg2rad(80)) * 1024 / np.deg2rad(300))
+        self.dynamixel_values[19] = self.dynamixel_values[19]*(1-k) + k*(512 + int((self.angles['Hz'] + np.deg2rad(80)) * 1024 / np.deg2rad(300)))
 
         torque = [1] * 12 + [1]*7
         self.sync_write_1(self.ADR_TOR_EN, torque)
