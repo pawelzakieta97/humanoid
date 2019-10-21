@@ -1,6 +1,8 @@
 import math
 from transformations import *
 from numpy.linalg import norm, inv
+from humanoid_base import HumanoidBase
+
 
 
 def remap_coordinates(joints):
@@ -12,12 +14,34 @@ def remap_coordinates(joints):
         joint[1] = -x
         joint[0] = -z
 
-class Humanoid:
-    def __init__(self):
+class Humanoid(HumanoidBase):
+    def __init__(self, portAX='COM8', portRX='COM11'):
+        super().__init__(portAX, portRX)
         self.angles = {'RAy': 0.0, 'RAx': 0.0, 'RFAy': 0.0,
                        'LAy': 0.0, 'LAx': 0.0, 'LFAy': 0.0,
                        'Hz': 0}
+        # wartosci, ktore beda wyslane do dynamixelli
+        self.dynamixel_values = [0] * 20
         self.dimensions = {'arm': 1.0, 'forearm': 1.0, 'shoulder': 0.5, 'spine': 1}
+
+    def send_signals(self):
+        self.dynamixel_values[13] = 512 - int(self.angles['RAy']*1024/np.deg2rad(300))
+        self.dynamixel_values[14] = 512 - int(self.angles['RAx'] * 1024 / np.deg2rad(300))
+        self.dynamixel_values[15] = 512 + int(self.angles['RFAy'] * 1024 / np.deg2rad(300))
+
+        self.dynamixel_values[16] = 512 - int(self.angles['RAy'] * 1024 / np.deg2rad(300))
+        self.dynamixel_values[17] = 512 - int(self.angles['RAx'] * 1024 / np.deg2rad(300))
+        self.dynamixel_values[18] = 512 + int(self.angles['RFAy'] * 1024 / np.deg2rad(300))
+
+        self.dynamixel_values[19] = 512 + int((self.angles['Hz'] + np.deg2rad(80)) * 1024 / np.deg2rad(300))
+
+        torque = [1] * 12 + [1]*7
+        self.sync_write_1(self.ADR_TOR_EN, torque)
+        self.sync_write_1(self.ADR_SLOPE_CW, self.slope_CW)
+        self.sync_write_1(self.ADR_SLOPE_CCW, self.slope_CCW)
+        self.sync_write_2(30, self.dynamixel_values)
+
+
 
     def getLeftHandPosition(self):
         R1 = rotation_y(self.angles['LAy'])
