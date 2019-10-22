@@ -21,7 +21,7 @@ class Humanoid(HumanoidBase):
                        'LAy': 0.0, 'LAx': 0.0, 'LFAy': 0.0,
                        'Hz': 0}
         # wartosci, ktore beda wyslane do dynamixelli
-        self.dynamixel_values = [0] * 20
+        self.dynamixel_values = [0.0] * 20
         self.dimensions = {'arm': 1.0, 'forearm': 1.0, 'shoulder': 0.5, 'spine': 1}
 
     def send_signals(self, k=0.1):
@@ -30,9 +30,9 @@ class Humanoid(HumanoidBase):
         self.dynamixel_values[14] = self.dynamixel_values[14]*(1-k) + k*(512 - int(self.angles['RAx'] * 1024 / np.deg2rad(300)))
         self.dynamixel_values[15] = self.dynamixel_values[14]*(1-k) + k*(512 + int(self.angles['RFAy'] * 1024 / np.deg2rad(300)))
 
-        self.dynamixel_values[16] = self.dynamixel_values[16]*(1-k) + k*(512 - int(self.angles['LAy'] * 1024 / np.deg2rad(300)))
+        self.dynamixel_values[16] = self.dynamixel_values[16]*(1-k) + k*(512 + int(self.angles['LAy'] * 1024 / np.deg2rad(300)))
         self.dynamixel_values[17] = self.dynamixel_values[17]*(1-k) + k*(512 - int(self.angles['LAx'] * 1024 / np.deg2rad(300)))
-        self.dynamixel_values[18] = self.dynamixel_values[18]*(1-k) + k*(512 + int(self.angles['LFAy'] * 1024 / np.deg2rad(300)))
+        self.dynamixel_values[18] = self.dynamixel_values[18]*(1-k) + k*(512 - int(self.angles['LFAy'] * 1024 / np.deg2rad(300)))
 
         self.dynamixel_values[19] = self.dynamixel_values[19]*(1-k) + k*(512 + int((self.angles['Hz'] + np.deg2rad(80)) * 1024 / np.deg2rad(300)))
 
@@ -40,7 +40,8 @@ class Humanoid(HumanoidBase):
         self.sync_write_1(self.ADR_TOR_EN, torque)
         self.sync_write_1(self.ADR_SLOPE_CW, self.slope_CW)
         self.sync_write_1(self.ADR_SLOPE_CCW, self.slope_CCW)
-        self.sync_write_2(30, self.dynamixel_values)
+        data_to_send = [int(element) for element in self.dynamixel_values]
+        self.sync_write_2(30, data_to_send)
 
 
 
