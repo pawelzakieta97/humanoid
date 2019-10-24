@@ -1,6 +1,8 @@
 comtypes==1.1.7
+future==0.18.1
+iso8601==0.1.12
 numpy==1.17.3
 pygame==1.9.6
 pykinect2==0.1.0
-# nalezy zainstalowac paczke przez pip a nastepnie podmienic pliki w folderze pykinect2
-# na te: https://github.com/Kinect/PyKinect2/tree/master/pykinect2
+pyserial==3.4
+PyYAML==5.1.2
