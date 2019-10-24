@@ -7,16 +7,17 @@ class HumanoidBase:
                  portRX='COM11'):           # port, który obsluguje RX
 
         self.port_AX = PortHandler(portAX)
-        self.port_RX = PortHandler(portRX)
+        # self.port_RX = PortHandler(portRX)
         self.packetHandler = PacketHandler(1.0)       # 1.0 to wersja protokolu
         self.Baudrate = 1000000
         self.port_AX.openPort()
-        self.port_RX.openPort()
+        # self.port_RX.openPort()
         self.ADR_POZ = 0x1E
         self.ADR_OB_POZ = 0x24
         self.ADR_SLOPE_CW = 0x1C
         self.ADR_SLOPE_CCW = 0x1D
         self.ADR_TOR_EN = 0x18
+        self.ADR_TOR_LIM = 34
         self.poz_start = [0,2048, 532, 379, 787, 655, 532, 2048, 492, 645, 237, 369, 492, 434, 539, 271, 590, 485, 753, 785]
         self.slope_CW = [0,32,2,2,2,2,2,32,2,2,2,2,2,32,32,32,32,32,32,64]
         self.slope_CCW = [0,32,2,2,2,2,2,32,2,2,2,2,2,32,32,32,32,32,32,64]
@@ -86,8 +87,8 @@ class HumanoidBase:
         pakietAX = GroupSyncWrite(self.port_AX,self.packetHandler,Adres,1)
         # pakietRX = GroupSyncWrite(self.port_RX,self.packetHandler,Adres,1)
 
-        for i in range(1,13):
-           pakietRX.addParam(i,[values[i]])                    # do obiektu trzeba dodac wartosci
+        # for i in range(1,13):
+        #    pakietRX.addParam(i,[values[i]])                    # do obiektu trzeba dodac wartosci
 
 
         for i in range(13,20):
@@ -128,9 +129,9 @@ class HumanoidBase:
         # pakietRX.clearParam()
 
     def send_pos(self,poz):
-        for i in range(1, 13):
-
-            self.packetHandler.write2ByteTxOnly(self.port_RX, i, self.ADR_POZ, poz[i])
+        # for i in range(1, 13):
+        #
+        #     self.packetHandler.write2ByteTxOnly(self.port_RX, i, self.ADR_POZ, poz[i])
         for i in range(13, 20):
 
             self.packetHandler.write2ByteTxOnly(self.port_AX, i, self.ADR_POZ, poz[i])

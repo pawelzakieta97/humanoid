@@ -134,7 +134,7 @@ class BodyGameRuntime(object):
         target_surface.unlock()
 
     def run(self):
-        h = Humanoid()
+        h = Humanoid(portAX='COM7')
         # -------- Main Program Loop -----------
         while not self._done:
             # --- Main event loop
@@ -177,13 +177,14 @@ class BodyGameRuntime(object):
                         joints_3d[j] = [joints[j].Position.x, joints[j].Position.y, joints[j].Position.z]
                     try:
                         h.mimic_kinect(joints_3d)
-                        h.send_signals()
+
                         print(h.angles)
                         # print(h.getRightHandPosition()[0:3, 3])
 
                     except:
                         print('Melson couldnt mimic this movement')
                     # time.sleep(1)
+                    h.send_signals()
 
             # --- copy back buffer surface pixels to the screen, resize it if needed and keep aspect ratio
             # --- (screen size may be different from Kinect's color frame size)
