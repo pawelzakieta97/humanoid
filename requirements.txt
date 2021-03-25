@@ -5,4 +5,4 @@ numpy==1.17.3
 pygame==1.9.6
 pykinect2==0.1.0
 pyserial==3.4
-PyYAML==5.1.2
+PyYAML==5.4
